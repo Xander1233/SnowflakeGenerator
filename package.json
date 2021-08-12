@@ -1,0 +1,19 @@
+{
+  "name": "snowflakegenerator",
+  "version": "1.0.0",
+  "description": "Twitter snowflake generator in pure javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xander1233/SnowflakeGenerator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Xander1233/SnowflakeGenerator/issues"
+  },
+  "homepage": "https://github.com/Xander1233/SnowflakeGenerator#readme"
+}
