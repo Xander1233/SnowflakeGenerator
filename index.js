@@ -21,28 +21,47 @@ class SnowflakeGenerator {
 	}
 
 	/**
-	 * Get a new generated snowflake as a string. Kinda like generators in javascript
-	 * @return {string}
+	 * Generate a specific amount of ids at once
+	 * @param amount {number?} the amount of ids you wanna generate
+	 * @return {string[]|string} array containing ids as strings
 	 */
-	next() {
-		return this.generate().toString();
+	next(amount) {
+		// Return one id if no amount is specified or the amount is 1
+		if (!amount || (typeof amount === 'number' && amount === 1))
+			return this.generateId().toString();
+
+		// Error check
+		if (typeof amount !== 'number')
+			throw new Error('You have to provide an amount of type "number"');
+		if (amount < 1)
+			throw new Error('amount has to be bigger than 0');
+
+		const idArray = [ ];
+
+		for (let i = 0; i < amount; i++) {
+			idArray.push(this.generateId().toString());
+		}
+
+		return idArray;
 	}
+
+
 
 	/**
 	 * Generates a new id and returns it as a bigint (check "id" for strings)
 	 * @return {bigint}
 	 */
-	generate() {
+	generateId() {
 		/**
 		 * generate a new timestamp
 		 * @type {bigint}
 		 */
-		let timestamp = this.generateTime();
+		let currentTimestamp = this.#generateTime();
 
 		/**
 		 * check if the clock moved backwards. if this is true, a unique id can't be guaranteed => throw an error
 		 */
-		if (timestamp < this.lastTimestamp) {
+		if (currentTimestamp < this.lastTimestamp) {
 			throw new Error('Clock moved backwards!');
 		}
 
@@ -52,15 +71,15 @@ class SnowflakeGenerator {
 		 *
 		 * otherwise, set accumulator to 0
 		 */
-		if (timestamp === this.lastTimestamp) {
+		if (currentTimestamp === this.lastTimestamp) {
 			this.accumulator = (this.accumulator + 1n) & 0xfffn;
 			if (this.accumulator === 0n) {
-				timestamp = this.waitUntilNextMillisecond();
+				currentTimestamp = this.#waitUntilNextMillisecond();
 			}
 		} else
 			this.accumulator = 0n;
 
-		this.lastTimestamp = timestamp;
+		this.lastTimestamp = currentTimestamp;
 
 		/**
 		 * build the snowflake
@@ -70,7 +89,8 @@ class SnowflakeGenerator {
 		 * process id: bit 16 to bit 12 (5 bits)
 		 * accumulator/increment: bit 11 to 0 (12 bits)
 		 */
-		return (((timestamp - this.epoch) << 22n) |
+		return (
+			((currentTimestamp - this.epoch) << 22n) |
 			(this.worker << 17n) |
 			(this.process << 12n) |
 			this.accumulator
@@ -81,7 +101,7 @@ class SnowflakeGenerator {
 	 * returns the current UTC millisecond timestamp as bigint
 	 * @return {bigint}
 	 */
-	generateTime() {
+	#generateTime() {
 		return BigInt(new Date(new Date().toUTCString()).getTime());
 	}
 
@@ -90,7 +110,7 @@ class SnowflakeGenerator {
 	 * @param value {bigint|number}
 	 * @return {bigint}
 	 */
-	parseBigInt(value) {
+	#parseBigInt(value) {
 		if (typeof value === 'bigint')
 			return value;
 		if (typeof value === 'number')
@@ -102,10 +122,10 @@ class SnowflakeGenerator {
 	 * method to wait until the next millisecond timestamp. This method just waits for the next bigger timestamp
 	 * @return {bigint}
 	 */
-	waitUntilNextMillisecond() {
-		let timestamp = this.generateTime();
+	#waitUntilNextMillisecond() {
+		let timestamp = this.#generateTime();
 		while (timestamp <= this.lastTimestamp) {
-			timestamp = this.generateTime();
+			timestamp = this.#generateTime();
 		}
 		return timestamp;
 	}
