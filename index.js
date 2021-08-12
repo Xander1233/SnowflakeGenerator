@@ -17,6 +17,14 @@ class SnowflakeGenerator {
 	 * @return {string}
 	 */
 	get id() {
+		return this.next();
+	}
+
+	/**
+	 * Get a new generated snowflake as a string. Kinda like generators in javascript
+	 * @return {string}
+	 */
+	next() {
 		return this.generate().toString();
 	}
 
