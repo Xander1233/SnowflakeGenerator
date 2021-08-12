@@ -10,5 +10,5 @@ Twitter snowflake generator in pure javascript.
 const generator = new SnowflakeGenerator();
 
 generator.id; // New generated snowflake
-generator.id; // New generated snowflake. different to the snowflake that got generated before
+generator.id; // New generated snowflake. Different to the snowflake that got generated before
 ```
