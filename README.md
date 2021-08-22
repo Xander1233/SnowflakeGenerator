@@ -39,7 +39,7 @@ const snowflake = snowflakeGenerator.id;
 
 ## Methods
 
-### [.next()](https://github.com/Xander1233/SnowflakeGenerator/blob/f75233aeee86210ed858f1f9f20feb9cb411c56c/index.js#L28)
+### [.next([amount])](https://github.com/Xander1233/SnowflakeGenerator/blob/f75233aeee86210ed858f1f9f20feb9cb411c56c/index.js#L28)
 
 Generate 1 or more snowflakes
 | Parameter | Type   | Required | Default | Description                                   |
